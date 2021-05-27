@@ -1,8 +1,3 @@
 airflow.db
 logs/*
-<<<<<<< Updated upstream
-__pycache__/
-data-warehouse.sqlite
-=======
 __pycache__/ 
->>>>>>> Stashed changes
