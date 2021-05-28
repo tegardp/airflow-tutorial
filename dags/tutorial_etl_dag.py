@@ -4,7 +4,7 @@ import openpyxl
 import re
 import sqlite3
 import pandas as pd
-from academi import disaster_etl, file_1000_etl, reviews_etl, tweet_etl, database_etl, chinook_etl
+from transform import disaster_etl, file_1000_etl, reviews_etl, database_etl, chinook_etl
 from airflow import DAG
 from airflow.decorators import task
 from airflow.operators.dummy import DummyOperator
@@ -37,7 +37,7 @@ def extract(filename, sheet_name=None, index_col=None, table_name=None):
     if 'csv' in filename:
         df = pd.read_csv(file_path)
     elif 'json' in filename:
-        df = pd.read_json(f"{DATA_PATH}/tweet_data.json", lines=True)
+        df = pd.read_json(f"{DATA_PATH}/{filename}", lines=True)
     elif 'xlsx' in filename:
         df = pd.read_excel(file_path, engine='openpyxl')
     elif 'xls' in filename:
@@ -59,7 +59,7 @@ def load_data(data :dict):
         df.to_sql(key, conn, if_exists="replace", index=False)
     conn.close()
 
-with DAG('academi',
+with DAG('tutorial_etl_dag',
          schedule_interval='@once',
          default_args=default_args,
          catchup=False) as dag:
@@ -84,11 +84,6 @@ with DAG('academi',
                 data.append(extract_review)
         transformed_data_review = reviews_etl.transform(data)
         reviews_load = load_data(transformed_data_review)
-    
-    with TaskGroup('Tweet') as Tweet:
-        data = extract('tweet_data.json')
-        transformed_data_tweet = tweet_etl.transform(data)
-        tweet_load = load_data(transformed_data_tweet)
 
     with TaskGroup('Database') as Database:
         data = []
@@ -145,5 +140,5 @@ with DAG('academi',
     start = DummyOperator(task_id='start')
     loaded = DummyOperator(task_id='All_data_loaded')
     end = DummyOperator(task_id='end')
-    start >> [File_1000, Disaster, Tweet, Review, Database, load_tracks, load_invoice_items, load_invoices, load_playlist_tracks ] >> loaded >> end
+    start >> [File_1000, Disaster, Review, Database, load_tracks, load_invoice_items, load_invoices, load_playlist_tracks ] >> loaded >> end
     
