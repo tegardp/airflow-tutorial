@@ -1,5 +1,4 @@
 import pandas as pd
-import sqlite3
 import json
 from airflow.decorators import task
 
