@@ -11,6 +11,8 @@ from airflow.operators.dummy import DummyOperator
 from airflow.utils.dates import days_ago
 from airflow.utils.task_group import TaskGroup
 
+CWD = os.getcwd()
+
 DATA_PATH = './airflow/data/0. raw'
 LOAD_PATH = './airflow/data/3. load'
 
@@ -35,7 +37,7 @@ def extract(filename, sheet_name=None, index_col=None, table_name=None):
     if 'csv' in filename:
         df = pd.read_csv(file_path)
     elif 'json' in filename:
-        df = pd.read_json("./airflow/data/0. raw/tweet_data.json", lines=True)
+        df = pd.read_json(f"{DATA_PATH}/tweet_data.json", lines=True)
     elif 'xlsx' in filename:
         df = pd.read_excel(file_path, engine='openpyxl')
     elif 'xls' in filename:

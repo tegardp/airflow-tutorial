@@ -8,7 +8,13 @@ requirements:
 You must have docker installed
 
 ```
-docker-compose up build
+airflow webserver
+```
+
+and in another terminal
+
+```
+airflow scheduler
 ```
 
 You can access Airflow UI in `localhost:8080` on your favorite web browser. Input username and password `airflow` and `airflow` if asked

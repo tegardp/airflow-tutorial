@@ -1,3 +1,4 @@
 airflow.db
 logs/*
 __pycache__/ 
+data-warehouse.sqlite
